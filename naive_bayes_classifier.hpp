@@ -119,26 +119,28 @@ public:
   }
 
   //Using Bayes rule and total probability, we get:
+          //getLikelihood                                                   //getPrior
   // Numerator: P(F1 = f1 AND F2 = f2 AND .... AND Fn = fn | C=classNum)P(C = classNum)
   // Denominator: P(F1 = ..... | C=0)P(C=0) + P(F1 = ..... | C=1)P(C=1)
+
+  //Compute and return the probability that the given string belongs to
+  //class classNumber.
+  //This is P(C=classNumber | F1=f1 and F2=f2 and ... Fn=fn)
+  //where f1, f2, ..., fn are 0 or 1 depending on the presence or absence
+  //of the feature in that string.
+  //The code will be similar to classify, except that you need to also
+  //need to use Bayes' rule and the law of total probability.
+  //Note that this function is not necessary for a working classifier!
+  //That is, you don't need to call getPosteriorProbability inside of classify.
   double getPosteriorProbability(int classNumber, string s)
   {
-    /* YOUR CODE HERE
-     *
-     * Compute and return the probability that the given string belongs to
-     * class classNumber.
-     * This is P(C=classNumber | F1=f1 and F2=f2 and ... Fn=fn)
-     *   where f1, f2, ..., fn are 0 or 1 depending on the presence or absence
-     *   of the feature in that string.
-     *
-     * The code will be similar to classify, except that you need to also
-     * need to use Bayes' rule and the law of total probability.
-     *
-     * Note that this function is not necessary for a working classifier!
-     * That is, you don't need to call getPosteriorProbability inside of classify.
-     */
+    //Numerator: P(F1 = f1 AND F2 = f2 AND .... AND Fn = fn | C=classNum)P(C = classNum)
+    double numerator = getLikelihood(classNumber, s) * getPriorProbability(classNumber);
+    //Denominator: P(F1 = ..... | C=0)P(C=0) + P(F1 = ..... | C=1)P(C=1)
+    double denominator = (getLikelihood(0, s) * getPriorProbability(0))
+      + (getLikelihood(1, s) * getPriorProbability(1));
 
-    return 0.0;  // stub, replace me!
+    return numerator/denominator;  
   }
 
 };
