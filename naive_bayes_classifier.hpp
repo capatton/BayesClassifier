@@ -60,46 +60,67 @@ protected:
     return probOfFeature;
   }
 
-public :
+public:
+  //Create the set of features that we'll use.
+  //For part 1 of the assignment, there are 26 features:
+  //one for each letter of the alphabet.  So, you need to
+  //create each feature and add it to m_features.
   NaiveBayesClassifier() {
 
     m_classTotals[0] = 0;  // initialize m_classTotals to 0;
     m_classTotals[1] = 0;
 
-    /* YOUR CODE HERE
-     *
-     * Create the set of features that we'll use.
-     * For part 1 of the assignment, there are 26 features:
-     * one for each letter of the alphabet.  So, you need to
-     * create each feature and add it to m_features.
-     */
+    const int ALPHABET_CHARACTERS = 26;
+    const int ASCII_UPPER_CASE = 65;
+
+    for (int i = 0; i < ALPHABET_CHARACTERS; ++i){
+      char upperCaseLetter = i + ASCII_UPPER_CASE;
+      Feature newFeature(string(1, upperCaseLetter));
+      m_features.push_back(newFeature);
+    }
   }
 
-  void addTrainingExample(string s, int classNumber) {
-    /* YOUR CODE HERE
-     *
-     * Given a string and its correct classification, update:
-     * (1) the counts that are used to compute the likelihoods.
-     *     Feature.addTrainingExample(featureVal, classNumber) should take care of this,
-     *     but you need to determine whether the feature is present for each feature.
-     * (2) the counts that are used to compute the prior probability
-     */
+  //Given a string and its correct classification, update:
+  //(1) the counts that are used to compute the likelihoods.
+  //Feature.addTrainingExample(featureVal, classNumber) should take care of this,
+  //but you need to determine whether the feature is present for each feature.
+  //(2) the counts that are used to compute the prior probability
+  void addTrainingExample(string s, int classNumber){
+    int featurePresent;
 
+    for (size_t i = 0; i < m_features.size(); ++i){
+      featurePresent = m_features[i].isFeaturePresent(s);
+      m_features[i].addTrainingExample(featurePresent, classNumber);
+    }
+
+    m_classTotals[classNumber]++;
   }
-
+  //Find Max{P(C=0) * ((for all j)P(Fj = fj | 0)), P(C=1) * ((for all j)P(Fj = fj | 1))}
+  //Compute and return the most probable class (0 or 1) that this string
+  //belongs to, using the maximum a posteriori (MAP) decision rule.
+  //You can do this using calls to getPriorProbability and getLikelihood.
+  //You do not need to call getPosteriorProbability.
   int classify(string s) {
-    /* YOUR CODE HERE
-     *
-     * Compute and return the most probable class (0 or 1) that this string
-     * belongs to, using the maximum a posteriori (MAP) decision rule.
-     *
-     * You can do this using calls to getPriorProbability and getLikelihood.
-     * You do not need to call getPosteriorProbability.
-     */
+    //Find P(C=0) * (for all j)P(Fj = fj | 0)
+    double priorProbOfZero = getPriorProbability(0);
+    double likelihoodOfZero = getLikelihood(0, s); 
+    double mapProbOfZero = priorProbOfZero * likelihoodOfZero;
 
-    return 0;  // stub, replace me!
+    double priorProbOfOne = getPriorProbability(1);
+    double likelihoodOfOne = getLikelihood(1, s);
+    double mapProbOfOne = priorProbOfOne * likelihoodOfOne;
+
+    if (mapProbOfZero >= mapProbOfOne){
+      return 0;
+    }
+    else{
+      return 1;
+    }  
   }
 
+  //Using Bayes rule and total probability, we get:
+  // Numerator: P(F1 = f1 AND F2 = f2 AND .... AND Fn = fn | C=classNum)P(C = classNum)
+  // Denominator: P(F1 = ..... | C=0)P(C=0) + P(F1 = ..... | C=1)P(C=1)
   double getPosteriorProbability(int classNumber, string s)
   {
     /* YOUR CODE HERE
