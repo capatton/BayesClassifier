@@ -33,14 +33,12 @@ class Feature {
    */
 
 protected:
-  int m_counts[2][2];
-  int m_totalPerClass[2];
+  int m_counts[2][2]; //m_counts[classNum][featurePresent]
+  int m_totalPerClass[2]; //m_counts[classNum][0] + m_counts[classNum][1]
   string m_toMatch;
 
 public:
   Feature(string toMatch) : m_toMatch(toMatch) {
-
-    // Initialize the counters to 0
     m_counts[0][0] = 0;
     m_counts[0][1] = 0;
     m_counts[1][0] = 0;

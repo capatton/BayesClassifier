@@ -26,31 +26,38 @@ class NaiveBayesClassifier {
    * "m_classTotals" counts how many training examples we've seen for each
    * of the two classes (0 and 1).
    */
-protected :
+protected:
   vector<Feature> m_features;
   int m_classTotals[2];
 
+  //Compute and return the prior probability that a string belongs to a class
+  //P(C=classNumber)
   double getPriorProbability(int classNumber) {
-    /* YOUR CODE HERE
-     *
-     * Compute and return the prior probability that a string belongs to a class.
-     * This is P(C=classNum).
-     */
+    double instancesOfClass = m_classTotals[classNumber];
+    double totalInstancesSeen = m_classTotals[0] + m_classTotals[1];
 
-    return 0.0;  // stub, replace me!
+
+    return instancesOfClass/totalInstancesSeen; 
   }
 
+  //Compute and return the likelihood of the class, given the features.
+  //This is P(F1=f1 and F2=f2 and ... Fn=fn | C=classNumber)
+  //where f1, f2, ..., fn are 0 or 1 depending on the presence or absence
+  //of the feature in that string.
   double getLikelihood(int classNumber, string s)
   {
-    /* YOUR CODE HERE
-     *
-     * Compute and return the likelihood of the class, given the features.
-     * This is P(F1=f1 and F2=f2 and ... Fn=fn | C=classNumber)
-     *   where f1, f2, ..., fn are 0 or 1 depending on the presence or absence
-     *   of the feature in that string.
-     */
+    int featurePresent = m_features[0].isFeaturePresent(s);
+    double probOfFeature = 
+      m_features[0].getProbOfFeatureGivenClass(featurePresent, classNumber);
 
-    return 0.0;  // stub, replace me!
+    //Uses independence assumption and computes:
+    //probOfFeature = P(F1=f1|C=classNumber)P(F2=f2|C=classNumber)...P(Fn=fn|C=classNumber)
+    for (size_t i = 1; i < m_features.size(); ++i){
+      featurePresent = m_features[i].isFeaturePresent(s);
+      probOfFeature *= m_features[i].getProbOfFeatureGivenClass(featurePresent, classNumber); 
+    }
+
+    return probOfFeature;
   }
 
 public :
