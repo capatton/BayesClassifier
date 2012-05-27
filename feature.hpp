@@ -12,7 +12,7 @@
 #include <string>
 #include <cstring>
 
-using std::string;
+ using std::string;
 /**
  * feature.hpp
  *
@@ -37,7 +37,7 @@ protected:
   int m_totalPerClass[2];
   string m_toMatch;
 
-public :
+public:
   Feature(string toMatch) : m_toMatch(toMatch) {
 
     // Initialize the counters to 0
@@ -50,35 +50,34 @@ public :
     m_totalPerClass[1] = 0;
   }
 
+  
+  //Determine whether this feature occurs in the string.
+  //Return 1 if the feature is present; 0 otherwise.
   int isFeaturePresent(string s) {
-    /* YOUR CODE HERE
-     *
-     * Determine whether this feature occurs in the string.
-     * Return 1 if the feature is present; 0 otherwise.
-     */
-    return 0;  // stub, replace me!
+    if (std::string::npos != s.find(m_toMatch)){
+      return 1;
+    }
+
+    return 0; 
   }
 
+  // Given the absence/presence of this feature for the given class,
+  // update the counts used to compute the probabilities.
+  // classNumber = the number of the class for this example (0 or 1)
+  // featurePresence = 0 or 1 stating the presence or absence of this feature
   void addTrainingExample(int featurePresence, int classNumber) {
-    /* YOUR CODE HERE
-     *
-     * Given the absence/presence of this feature for the given class,
-     * update the counts used to compute the probabilities.
-     *
-     * classNumber = the number of the class for this example (0 or 1)
-     * featurePresence = 0 or 1 stating the presence or absence of this feature
-     */
+     m_counts[classNumber][featurePresence]++;
+     m_totalPerClass[classNumber]++;
   }
 
+  //Return (# examples with featurePresence and classNumber (+ 1)/(# examples with classNumber (+ 2))
   double getProbOfFeatureGivenClass(int featurePresence, int classNumber) {
-    /* YOUR CODE HERE
-     *
-     * What is the probability of this feature being absent/present for this class?
-     * Use your counts, but make sure to smooth it by adding 1 to avoid probabilities of
-     * absolute zero or one.
-     */
-    //.. you need to smooth it so there's never a 0 or 1 probability
-    return 0.0; // stub, replace me!
+    int NUMERATOR_SMOOTHING = 1;
+    int DENOMINATOR_SMOOTHING = 2;
+    double numerator = m_counts[classNumber][featurePresence] + NUMERATOR_SMOOTHING;
+    double denominator = m_totalPerClass[classNumber] + DENOMINATOR_SMOOTHING;
+
+    return numerator/denominator; 
   }
 };
 
