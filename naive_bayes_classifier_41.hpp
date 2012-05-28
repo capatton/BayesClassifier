@@ -70,13 +70,41 @@ public:
     m_classTotals[0] = 0;  // initialize m_classTotals to 0;
     m_classTotals[1] = 0;
 
-    const int ALPHABET_CHARACTERS = 26;
-    const int ASCII_UPPER_CASE = 65;
+    const size_t ALPHABET_CHARACTERS = 26;
+    const size_t ASCII_UPPER_CASE = 65;
 
-    for (int i = 0; i < ALPHABET_CHARACTERS; ++i){
+    for (size_t i = 0; i < ALPHABET_CHARACTERS; ++i){
       char upperCaseLetter = i + ASCII_UPPER_CASE;
       Feature newFeature(string(1, upperCaseLetter));
       m_features.push_back(newFeature);
+    }
+    
+    //For Part 4.1, all two letter pairs (AA, AB, AC, AD, ..., ZZ)
+    for (size_t i = 0; i < ALPHABET_CHARACTERS; ++i){
+      char firstLetter = i + ASCII_UPPER_CASE;
+      for (size_t j = 0; j < ALPHABET_CHARACTERS; ++j){
+        char secondLetter = j + ASCII_UPPER_CASE;
+        string bothLetters(1, firstLetter);
+        bothLetters.append(1, secondLetter);
+        Feature newFeature(bothLetters);
+        m_features.push_back(newFeature);
+      }
+    }
+
+    //For Part 4.1, all three letter pairs (AAA, AAB, AAC, ..., ZZZ)
+    for (size_t i = 0; i < ALPHABET_CHARACTERS; ++i){
+      char firstLetter = i + ASCII_UPPER_CASE;
+      for (size_t j = 0; j < ALPHABET_CHARACTERS; ++j){
+        char secondLetter = j + ASCII_UPPER_CASE;
+        string bothLetters(1, firstLetter);
+        bothLetters.append(1, secondLetter);
+        for (size_t k = 0; k < ALPHABET_CHARACTERS; ++k){
+          char thirdLetter = k + ASCII_UPPER_CASE;
+          bothLetters.append(1, thirdLetter);
+          Feature newFeature(bothLetters);
+          m_features.push_back(newFeature);
+        }
+      }
     }
   }
 
@@ -117,6 +145,11 @@ public:
       return 1;
     }  
   }
+
+  //Using Bayes rule and total probability, we get:
+          //getLikelihood                                                   //getPrior
+  // Numerator: P(F1 = f1 AND F2 = f2 AND .... AND Fn = fn | C=classNum)P(C = classNum)
+  // Denominator: P(F1 = ..... | C=0)P(C=0) + P(F1 = ..... | C=1)P(C=1)
 
   //Compute and return the probability that the given string belongs to
   //class classNumber.
