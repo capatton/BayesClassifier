@@ -33,19 +33,22 @@ class Feature {
    */
 
 protected:
-  int m_counts[2][2]; //m_counts[classNum][featurePresent]
-  int m_totalPerClass[2]; //m_counts[classNum][0] + m_counts[classNum][1]
+  //Added another class to m_counts and m_totalPerClass
+  int m_counts[3][2]; //m_counts[classNum][featurePresent]
+  int m_totalPerClass[3]; //m_counts[classNum][0] + m_counts[classNum][1]
   string m_toMatch;
-
 public:
   Feature(string toMatch) : m_toMatch(toMatch) {
     m_counts[0][0] = 0;
     m_counts[0][1] = 0;
     m_counts[1][0] = 0;
     m_counts[1][1] = 0;
+    m_counts[2][0] = 0;
+    m_counts[2][1] = 0;
 
     m_totalPerClass[0] = 0;
     m_totalPerClass[1] = 0;
+    m_totalPerClass[2] = 0;
   }
 
   
@@ -68,10 +71,10 @@ public:
      m_totalPerClass[classNumber]++;
   }
 
-  //Return (# examples with featurePresence and classNumber (+ 1)/(# examples with classNumber (+ 2))
+  //Return (# examples with featurePresence and classNumber (+ 1)/(# examples with classNumber (+ 3))
   double getProbOfFeatureGivenClass(int featurePresence, int classNumber) {
     int NUMERATOR_SMOOTHING = 1;
-    int DENOMINATOR_SMOOTHING = 2;
+    int DENOMINATOR_SMOOTHING = 3;
     double numerator = m_counts[classNumber][featurePresence] + NUMERATOR_SMOOTHING;
     double denominator = m_totalPerClass[classNumber] + DENOMINATOR_SMOOTHING;
 

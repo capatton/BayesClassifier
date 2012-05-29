@@ -24,17 +24,17 @@ class NaiveBayesClassifier {
    * in this classifier.
    *
    * "m_classTotals" counts how many training examples we've seen for each
-   * of the two classes (0 and 1).
+   * of the three classes (0,1, and 2).
    */
 protected:
   vector<Feature> m_features;
-  int m_classTotals[2];
+  int m_classTotals[3];
 
   //Compute and return the prior probability that a string belongs to a class
   //P(C=classNumber)
   double getPriorProbability(int classNumber) {
     double instancesOfClass = m_classTotals[classNumber];
-    double totalInstancesSeen = m_classTotals[0] + m_classTotals[1];
+    double totalInstancesSeen = m_classTotals[0] + m_classTotals[1] + m_classTotals[2];
 
 
     return instancesOfClass/totalInstancesSeen; 
@@ -69,6 +69,7 @@ public:
 
     m_classTotals[0] = 0;  // initialize m_classTotals to 0;
     m_classTotals[1] = 0;
+    m_classTotals[2] = 0;
 
     const int ALPHABET_CHARACTERS = 26;
     const int ASCII_UPPER_CASE = 65;
@@ -110,11 +111,18 @@ public:
     double likelihoodOfOne = getLikelihood(1, s);
     double mapProbOfOne = priorProbOfOne * likelihoodOfOne;
 
-    if (mapProbOfZero >= mapProbOfOne){
+    double priorProbOfTwo = getPriorProbability(2);
+    double likelihoodOfTwo = getLikelihood(2, s);
+    double mapProbOfTwo = priorProbOfTwo * likelihoodOfTwo;
+
+    if (mapProbOfZero >= mapProbOfOne && mapProbOfZero >= mapProbOfTwo){
       return 0;
+    }    
+    else if (mapProbOfOne >= mapProbOfZero && mapProbOfOne >= mapProbOfTwo){
+      return 1;
     }
     else{
-      return 1;
+      return 2;
     }  
   }
 
@@ -131,9 +139,10 @@ public:
   {
     //Numerator: P(F1 = f1 AND F2 = f2 AND .... AND Fn = fn | C=classNum)P(C = classNum)
     double numerator = getLikelihood(classNumber, s) * getPriorProbability(classNumber);
-    //Denominator: P(F1 = ..... | C=0)P(C=0) + P(F1 = ..... | C=1)P(C=1)
+    //Denominator: P(F1 = ..... | C=0)P(C=0) + P(F1 = ..... | C=1)P(C=1) + P(F1 = ... | C=2)P(C=2)
     double denominator = (getLikelihood(0, s) * getPriorProbability(0))
-      + (getLikelihood(1, s) * getPriorProbability(1));
+                       + (getLikelihood(1, s) * getPriorProbability(1))  
+                       + (getLikelihood(2, s) * getPriorProbability(2));
 
     return numerator/denominator;  
   }

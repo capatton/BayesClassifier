@@ -111,6 +111,7 @@ using std::endl;
          << "Mean squared error: " << (squaredError / (double) numTried) << endl;
   }
 
+  // Evaluation function for 3 classes
   std::pair<int,int> evaluateMultiWay(NaiveBayesClassifier nbc1, NaiveBayesClassifier nbc2, NaiveBayesClassifier nbc3,
                                       string testFile, int trueClass) {
 
@@ -148,6 +149,7 @@ using std::endl;
 
   }
 
+  // Gets called if three classes are passed.  Changed to actually compare each one
   void multiWayMain(int argc, char *argv[]) {
     cout << "multi-way classification" << endl;
 
